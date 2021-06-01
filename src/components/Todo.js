@@ -1,55 +1,51 @@
 import React, { useState } from 'react'
-import Todo from './Todo'
+import { TiEdit } from 'react-icons/ti'
+import { IoMdCloseCircle } from 'react-icons/io'
 import TodoForm from './TodoForm'
 
+const icons = "icons"
+const deleteIcon = "deleteIcon"
+const editIcon = "editIcon"
+const todoRow = 'todoRow'
+const complete = 'complete'
 
-function TodoList() {
-    const [todos, setTodos] = useState([])
-    const addTodo = todo => {
-        if (!todo.text || /^\s*$/.test(todo.text)) {
-            return
-        }
-        const newTodos = [todo, ...todos]
-        setTodos(newTodos)
-        // console.log(todo,...todos);
-    }
+const Todo = ({ todos, completeTodo, removeTodo, updatedTodo }) => {
+    const [edit, setEdit] = useState({
+        id: null,
+        value: '',
+    })
 
-    const updatedTodo = (todoId, newValue) =>{
-        if (!newValue.text || /^\s*$/.test(newValue.text)) {
-            return
-        }
-        setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)))
-    }
-
-    const removeTodo = id => {
-        const removeArr = [...todos].filter(todo => todo.id !== id)
-        setTodos(removeArr)
-    }
-
-
-
-    const completeTodo = id => {
-        let updatedTodos = todos.map(todo => {
-            if (todo.id === id) {
-                todo.isComplete = !todo.isComplete
-            }
-            return todo
+    const submitUpdate = value => {
+        updatedTodo(edit.id, value)
+        setEdit({
+            id: null,
+            value: ""
         })
-        setTodos(updatedTodos)
     }
-    return (
-        <div>
-            <h1>What's the Plans for Today? </h1>
-            <TodoForm onSubmit={addTodo} />
-            <Todo
-                updatedTodo={updatedTodo}
-                removeTodo={removeTodo}
-                todos={todos}
-                completeTodo={completeTodo}
-            />
 
+    if (edit.id) {
+        return <TodoForm edit={edit} onSubmit={submitUpdate} />
+    }
+
+    return todos.map((todo, index,) => (
+        <div className={todo.isComplete ? todoRow + " " + complete : todoRow} key={index} >
+
+            <div key={todo.id} onClick={() => completeTodo(todo.id)}>
+                {todo.text}
+            </div>
+            <div className={icons}>
+                <IoMdCloseCircle
+                    onClick={() => removeTodo(todo.id)}
+                    className={deleteIcon}
+                />
+                <TiEdit
+                    onClick={() => setEdit({ id: todo.id, value: todo.text })}
+                    className={editIcon}
+                />
+            </div>
         </div>
-    )
+    ))
+
 }
 
-export default TodoList
+export default Todo
