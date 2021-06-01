@@ -1,9 +1,12 @@
 import './App.css';
+import React from 'react';
+import TodoList from './components/TodoList';
 
 function App() {
   return (
-    <div className="todo-app">
-      <h1>Todo app</h1>
+    <div className="todo_app">
+      <h1>Todo App</h1>
+      <TodoList />
     </div>
   );
 }
